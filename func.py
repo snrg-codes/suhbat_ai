@@ -6,9 +6,7 @@ import os
 from google import genai
 from google.genai import types
 
-rol = "Sistemniy administrator"
-daraja = "junior"
-ism = "Pepe"
+
 
 def generate( rol, daraja, ism, javob= f"salom mening ismim {ism}"):
     client = genai.Client(
@@ -37,7 +35,11 @@ def generate( rol, daraja, ism, javob= f"salom mening ismim {ism}"):
         config=generate_content_config,
     ):
         print(chunk.text, end="")
-
-while True:
-    user = input("javob: ")
-    generate(rol, daraja, ism, user)
+if __name__ == "__main__":
+    rol = "Sistemniy administrator"
+    daraja = "junior"
+    ism = "Pepe"
+    
+    while True:
+        user = input("javob: ")
+        generate(rol, daraja, ism, user)
