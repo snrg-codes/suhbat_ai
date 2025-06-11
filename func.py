@@ -7,8 +7,7 @@ from google import genai
 from google.genai import types
 
 
-
-def generate( rol, daraja, ism, javob= f"salom mening ismim {ism}"):
+def generate(data:dict):
     client = genai.Client(
         api_key=os.environ.get("GEMINI_API_KEY"),
     )
@@ -18,28 +17,47 @@ def generate( rol, daraja, ism, javob= f"salom mening ismim {ism}"):
         types.Content(
             role="user",
             parts=[
-                types.Part.from_text(text=f"""{javob}"""),
+                types.Part.from_text(text="""INSERT_INPUT_HERE"""),
             ],
         ),
     ]
     generate_content_config = types.GenerateContentConfig(
         response_mime_type="text/plain",
         system_instruction=[
-            types.Part.from_text(text=f"""sen {rol} mutaxassisi sifatida 10 yillik tajribaga egasan. Sen {daraja} {rol} lavozimiga {ism} ismli mutaxasisni olish uchun suhbat jarayonidasan. Ketma-ket savollarni ber. savollar soni 10 ta. savollar javobi qoniqtirmasa bu haqida yoz va savol berishni davom ettir. suhbat tugaganidan so'ng statistikani ber va ushbu lavozimga {ism} to'g'ri keladi yoki yo'q 10 ballik tizimda bahola."""),
+            types.Part.from_text(text=f"""Sen 10 yillik tajribaga ega {data.['rol']} mutaxassisan . Sen hozirda \"rol\", \"daraja\", \"stek\" va \"texnologiyalar\" bo‘yicha malakali mutaxassisni suhbatdan o‘tkazmoqdasan.
+
+                                        Vakansiya quyidagicha:
+                                        - Rol: {data['rol']}
+                                        - Daraja: {data['daraja']}
+                                        - Stek: {data['stek']}
+                                        - Texnologiyalar: {data['texnologiyalar']}
+
+                                        Sening vazifang:
+                                        - Ketma-ket texnik savollar berish (jami 10 ta)
+                                        - Savollarni turlicha darajada ber: oson, o‘rtacha va murakkab
+                                        - Har bir javobdan so‘ng qisqacha baho ber: (masalan, \"to‘liq javob\", \"yuzaki javob\", \"noto‘g‘ri\", \"qo‘shimcha so‘rash kerak\")
+                                        - Agar javob etarli bo‘lmasa, aniqlashtiruvchi savol ber yoki boshqa misol so‘ra
+                                        - Suhbat so‘ngida natijani chiqar:
+                                        - 10 ballik baho tizimi asosida umumiy texnik darajasini bahola
+                                        - Qisqacha izoh yoz: kuchli tomonlar, zaif joylar, tavsiyalar
+                                        - Ushbu lavozimga mos yoki mos emasligini yoz
+
+                                        Faqat texnik savollar va professional suhbatga e’tibor qarat.
+
+                                        ---
+
+                                        Endi foydalanuvchi quyidagi savolga javob yozadi va sen unga asoslanib intervyuni boshlaysan:
+                                        """),
         ],
     )
 
-    for chunk in client.models.generate_content_stream(
+    response = client.models.generate_content(
         model=model,
         contents=contents,
         config=generate_content_config,
-    ):
-        print(chunk.text, end="")
+    )
+    return response.text
+
+
 if __name__ == "__main__":
-    rol = "Sistemniy administrator"
-    daraja = "junior"
-    ism = "Pepe"
-    
-    while True:
-        user = input("javob: ")
-        generate(rol, daraja, ism, user)
+    generate()
